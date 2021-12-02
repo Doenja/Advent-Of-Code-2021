@@ -1,15 +1,17 @@
 import { readFileSync } from "fs";
 
-export function getNumberArray() {
-    const input = readFileSync("input/1.txt", "utf-8");
-    const numberStrings = input.split("\n");
+function getMeasurements() {
+    const fileContent = readFileSync("input/1.txt", "utf-8");
+    const numberStrings = fileContent.split("\n");
     return numberStrings.map((string) => parseInt(string));
 }
 
-export function getIncreases(numbers: number[]) {
+export const measurements = getMeasurements();
+
+export function getIncreases(datapoints: number[]) {
     let increases = 0;
-    numbers.forEach((string, i) => {
-        if (i > 0 && string > numbers[i - 1]) {
+    datapoints.forEach((datapoint, i) => {
+        if (i > 0 && datapoint > datapoints[i - 1]) {
             increases++;
         }
     });
@@ -17,4 +19,4 @@ export function getIncreases(numbers: number[]) {
     return increases;
 }
 
-export const part1 = getIncreases(getNumberArray());
+export const part1 = getIncreases(measurements);

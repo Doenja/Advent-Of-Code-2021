@@ -8,6 +8,6 @@ mkdir $day
 
 # Create new files for part1 and part2
 cd $day 
-touch part1.ts part2.ts
+touch part1.ts part2.ts assignment.txt
 echo 'export const part1 = "not determined yet";' > part1.ts
 echo 'export const part2 = "not determined yet";' > part2.ts
