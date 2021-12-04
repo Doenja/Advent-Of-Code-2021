@@ -6,11 +6,13 @@ function getInput(file: string) {
     const bingoBalls = fileContent.shift()?.split(",").map(Number);
 
     let rows: number[][] = [];
+
     fileContent.forEach((line) => {
         if (line === "") {
             return;
         }
-        rows = [...rows, line.split(" ").map(Number)];
+
+        rows = [...rows, line.trim().split(/ +/g).map(Number)];
     });
 
     return {
@@ -19,14 +21,9 @@ function getInput(file: string) {
     };
 }
 
-const input = getInput("input/4.txt");
+export const input = getInput("input/4.txt");
 
-let cards: { [key: number]: { x: number[]; y: number[] } } = {};
-let drawnNumbers: number[] = [];
-let winner: number;
-let winningNumber: number;
-
-function getSumUnmarked(cardNr: number) {
+export function getSumUnmarked(cardNr: number, drawn: number[]) {
     const startingRow = cardNr * 5;
 
     let numbers: number[] = [];
@@ -36,7 +33,7 @@ function getSumUnmarked(cardNr: number) {
 
     let total = 0;
     numbers.forEach((nr) => {
-        if (!drawnNumbers.includes(nr)) {
+        if (!drawn.includes(nr)) {
             total = total + nr;
         }
     });
@@ -44,74 +41,69 @@ function getSumUnmarked(cardNr: number) {
     return total;
 }
 
-function checkWinningCoordinates(coordinates: number[], cardNr: number, drawnNr: number) {
-    // When there are 5 occurances of the same coordinate
-    // we have a winner
+export function isWinner(coordinates: number[]) {
+    // When there are 5 occurances of the same coordinate we have a winner
+    if (coordinates.length < 5) return false;
+
     let occurances: { [key: number]: number } = {};
+    let wins = false;
 
     for (const nr of coordinates) {
-        if (winner) {
-            break;
-        }
         occurances = {
             ...occurances,
             [nr]: occurances[nr] ? occurances[nr] + 1 : 1,
         };
-
         if (occurances[nr] > 4) {
-            winner = cardNr;
-            winningNumber = drawnNr;
+            wins = true;
+            break;
         }
     }
+
+    return wins;
 }
 
-function markCards(drawnNumber: number) {
-    // In each row we check if the drawnnumber exists
-    input.rows.forEach((row, i) => {
-        if (winner) {
-            return;
+function drawWinner(bingoBalls: number[]) {
+    let cards: { [key: number]: { x: number[]; y: number[]; drawn: number[]; winningNumber?: number } } = {};
+    let winner = -1;
+
+    for (const drawnNumber of bingoBalls) {
+        if (winner !== -1) {
+            break;
         }
 
-        const nrIndx = row.findIndex((nr) => nr === drawnNumber);
-        if (nrIndx !== -1) {
-            // if it does we save its x (column) and y (row) coordinates
+        input.rows.forEach((row, i) => {
+            const nrIndx = row.findIndex((nr) => nr === drawnNumber);
+            if (nrIndx === -1) return;
+
             const cardNr = Math.floor(i / 5);
-            cards = {
-                ...cards,
-                [cardNr]: {
-                    x: cards[cardNr] ? [...cards[cardNr].x, nrIndx] : [nrIndx],
-                    y: cards[cardNr] ? [...cards[cardNr].y, i] : [i],
-                },
-            };
 
-            // When we have a card with more than 5 x or y coordinates
-            // We could have a winner, so we check for that
             if (!cards[cardNr]) {
-                return;
-            } else if (cards[cardNr].x.length > 4 || cards[cardNr].y.length > 4) {
-                checkWinningCoordinates(cards[cardNr].y, cardNr, drawnNumber);
-                checkWinningCoordinates(cards[cardNr].x, cardNr, drawnNumber);
+                cards = { ...cards, [cardNr]: { x: [], y: [], drawn: [] } };
             }
-        }
-    });
-}
+            const card = cards[cardNr];
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//@ts-ignore
-function drawBalls(): number | undefined {
-    if (!input.bingoBalls) {
-        return;
+            card.x.push(nrIndx);
+            card.y.push(i);
+            card.drawn.push(drawnNumber);
+
+            if (isWinner(card.x) || isWinner(card.y)) {
+                card.winningNumber = drawnNumber;
+                winner = cardNr;
+            }
+        });
     }
 
-    // We check drawn numbers until we have a winner
-    for (const number of input.bingoBalls) {
-        drawnNumbers = [...drawnNumbers, number];
-        markCards(number);
-
-        if (winner) {
-            return winningNumber * getSumUnmarked(winner);
-        }
-    }
+    return { card: cards[winner], cardNumber: winner };
 }
 
-export const part1 = drawBalls();
+function getAnswer() {
+    if (!input.bingoBalls) return;
+
+    const { card, cardNumber } = drawWinner(input.bingoBalls);
+
+    if (!card || !card.winningNumber) return;
+
+    return getSumUnmarked(cardNumber, card.drawn) * card.winningNumber;
+}
+
+export const part1 = getAnswer();
