@@ -26,56 +26,6 @@ let drawnNumbers: number[] = [];
 let winner: number;
 let winningNumber: number;
 
-function markCards(drawnNumber: number) {
-    input.rows.forEach((row, i) => {
-        if (winner) {
-            return;
-        }
-
-        const nrIndx = row.findIndex((nr) => nr === drawnNumber);
-        if (nrIndx !== -1) {
-            const cardNr = Math.floor(i / 5);
-            cards = {
-                ...cards,
-                [cardNr]: {
-                    x: cards[cardNr] ? [...cards[cardNr].x, nrIndx] : [nrIndx],
-                    y: cards[cardNr] ? [...cards[cardNr].y, i] : [i],
-                },
-            };
-
-            // When you have a card with 5 marks on the same x or y coordinate,
-            // you have a winner
-            if (!cards[cardNr]) {
-                return;
-            } else if (cards[cardNr].x.length > 4) {
-                checkWinningCoordinates(cards[cardNr].x, cardNr, drawnNumber);
-            } else if (cards[cardNr].y.length > 4) {
-                checkWinningCoordinates(cards[cardNr].y, cardNr, drawnNumber);
-            }
-        }
-    });
-}
-
-function checkWinningCoordinates(coordinates: number[], cardNr: number, drawnNr: number) {
-    let occurances: { [key: number]: number } = {};
-
-    for (const nr of coordinates) {
-        if (winner) {
-            break;
-        }
-        occurances = {
-            ...occurances,
-            [nr]: occurances[nr] ? occurances[nr] + 1 : 1,
-        };
-        console.log(occurances);
-
-        if (occurances[nr] > 4) {
-            winner = cardNr;
-            winningNumber = drawnNr;
-        }
-    }
-}
-
 function getSumUnmarked(cardNr: number) {
     const startingRow = cardNr * 5;
 
@@ -94,6 +44,58 @@ function getSumUnmarked(cardNr: number) {
     return total;
 }
 
+function checkWinningCoordinates(coordinates: number[], cardNr: number, drawnNr: number) {
+    // When there are 5 occurances of the same coordinate
+    // we have a winner
+    let occurances: { [key: number]: number } = {};
+
+    for (const nr of coordinates) {
+        if (winner) {
+            break;
+        }
+        occurances = {
+            ...occurances,
+            [nr]: occurances[nr] ? occurances[nr] + 1 : 1,
+        };
+
+        if (occurances[nr] > 4) {
+            winner = cardNr;
+            winningNumber = drawnNr;
+        }
+    }
+}
+
+function markCards(drawnNumber: number) {
+    // In each row we check if the drawnnumber exists
+    input.rows.forEach((row, i) => {
+        if (winner) {
+            return;
+        }
+
+        const nrIndx = row.findIndex((nr) => nr === drawnNumber);
+        if (nrIndx !== -1) {
+            // if it does we save its x (column) and y (row) coordinates
+            const cardNr = Math.floor(i / 5);
+            cards = {
+                ...cards,
+                [cardNr]: {
+                    x: cards[cardNr] ? [...cards[cardNr].x, nrIndx] : [nrIndx],
+                    y: cards[cardNr] ? [...cards[cardNr].y, i] : [i],
+                },
+            };
+
+            // When we have a card with more than 5 x or y coordinates
+            // We could have a winner, so we check for that
+            if (!cards[cardNr]) {
+                return;
+            } else if (cards[cardNr].x.length > 4 || cards[cardNr].y.length > 4) {
+                checkWinningCoordinates(cards[cardNr].y, cardNr, drawnNumber);
+                checkWinningCoordinates(cards[cardNr].x, cardNr, drawnNumber);
+            }
+        }
+    });
+}
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 function drawBalls(): number | undefined {
@@ -101,6 +103,7 @@ function drawBalls(): number | undefined {
         return;
     }
 
+    // We check drawn numbers until we have a winner
     for (const number of input.bingoBalls) {
         drawnNumbers = [...drawnNumbers, number];
         markCards(number);
