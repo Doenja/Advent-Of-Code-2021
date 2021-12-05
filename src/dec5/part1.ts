@@ -16,52 +16,69 @@ export function filterInput(input: number[][][]) {
     });
 }
 
-export function fillPoints(input: number[][][]) {
-    return input.map((vent) => {
+export function getDangerous(input: number[][][]) {
+    let overlap: { [x: number]: number[] } = [];
+    let dangerous = 0;
+
+    input.forEach((vent) => {
         const x1 = vent[0][0];
         const x2 = vent[1][0];
         const y1 = vent[0][1];
         const y2 = vent[1][1];
 
-        const deltaX = x2 - x1;
-        const deltaY = y2 - y1;
-
-        let xArr: string[] = [];
-        let yArr: string[] = [];
-
-        if (Math.abs(deltaX) > 0) {
-            xArr = new Array(Math.abs(deltaX) + 1).fill(0).map((_, i) => {
-                return `${deltaX > 0 ? x1 + i : x1 - i},${y1}`;
-            });
-        }
-        if (Math.abs(deltaY) > 0) {
-            yArr = new Array(Math.abs(deltaY) + 1).fill(0).map((_, i) => {
-                return `${x1},${deltaY > 0 ? y1 + i : y1 - i}`;
-            });
-        }
-
-        return xArr.length ? xArr : yArr;
-    });
-}
-
-export function countOccurance(vectors: string[][]) {
-    let occurance: { [key: string]: number } = {};
-    let totalHighOccurance = 0;
-
-    for (const vector of vectors) {
-        for (const point of vector) {
-            if (occurance[point]) {
-                occurance[point]++;
-                if (occurance[point] > 1) {
-                    totalHighOccurance++;
+        if (x2 > x1) {
+            for (let x = x1; x < x2 + 1; x++) {
+                if (overlap[x] && overlap[x].filter((yVal) => yVal === y1).length === 1) {
+                    overlap[x].push(y1);
+                    dangerous++;
+                } else if (overlap[x]) {
+                    overlap[x].push(y1);
+                } else {
+                    overlap = { ...overlap, [x]: [y1] };
                 }
-            } else {
-                occurance = { ...occurance, [point]: 1 };
             }
         }
-    }
+        if (x1 > x2) {
+            for (let x = x1; x > x2 - 1; x--) {
+                if (overlap[x] && overlap[x].filter((yVal) => yVal === y1).length === 1) {
+                    overlap[x].push(y1);
+                    dangerous++;
+                } else if (overlap[x]) {
+                    overlap[x].push(y1);
+                } else {
+                    overlap = { ...overlap, [x]: [y1] };
+                }
+            }
+        }
+        if (y2 > y1) {
+            for (let y = y1; y < y2 + 1; y++) {
+                if (overlap[x1] && overlap[x1].filter((yVal) => yVal === y).length === 1) {
+                    overlap[x1].push(y);
+                    dangerous++;
+                } else if (overlap[x1]) {
+                    overlap[x1].push(y);
+                } else {
+                    overlap = { ...overlap, [x1]: [y] };
+                }
+            }
+        }
+        if (y1 > y2) {
+            for (let y = y1; y > y2 - 1; y--) {
+                if (overlap[x1] && overlap[x1].filter((yVal) => yVal === y).length === 1) {
+                    overlap[x1].push(y);
+                    dangerous++;
+                } else if (overlap[x1]) {
+                    overlap[x1].push(y);
+                } else {
+                    overlap = { ...overlap, [x1]: [y] };
+                }
+            }
+        }
+    });
 
-    return totalHighOccurance;
+    console.log(overlap);
+
+    return dangerous;
 }
 
 export function part1(file: string) {
@@ -71,11 +88,8 @@ export function part1(file: string) {
     // Filter out all lines that are diagonal
     const filtered = filterInput(input);
 
-    // Add the points that are in between
-    const vectors = fillPoints(filtered);
-
     // Loop over the points and create an object
     // that counts the occurance of every point
     // Count all the points that occur more than once
-    return countOccurance(vectors);
+    return getDangerous(filtered);
 }
