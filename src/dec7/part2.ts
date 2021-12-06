@@ -1,8 +1,4 @@
-import { readFileSync } from "fs";
-
-export function getInput(file: string) {
-    return readFileSync(file, "utf-8");
-}
+import { getInput } from "./part1";
 
 export function part2(file: string) {
     const input = getInput(file);

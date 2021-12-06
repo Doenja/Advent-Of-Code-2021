@@ -1,12 +1,9 @@
 import { readFileSync } from "fs";
 
-function getMeasurements() {
-    const fileContent = readFileSync("input/1.txt", "utf-8");
-    const numberStrings = fileContent.split("\n");
-    return numberStrings.map((string) => parseInt(string));
+export function getInput(file: string) {
+    const fileContent = readFileSync(file, "utf-8");
+    return fileContent.split("\n").map(Number);
 }
-
-export const measurements = getMeasurements();
 
 export function getIncreases(datapoints: number[]) {
     let increases = 0;
@@ -19,4 +16,7 @@ export function getIncreases(datapoints: number[]) {
     return increases;
 }
 
-export const part1 = getIncreases(measurements);
+export function part1(file: string) {
+    const input = getInput(file);
+    return getIncreases(input);
+}

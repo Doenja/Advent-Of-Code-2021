@@ -1,13 +1,16 @@
-import { getIncreases, measurements } from "./part1";
+import { getIncreases, getInput } from "./part1";
 
-function getWindowIncreases() {
+function getWindowIncreases(input: number[]) {
     let windowTotals: number[] = [];
 
-    measurements.forEach((measurement, i) => {
-        windowTotals = [...windowTotals, measurement + measurements[i + 1] + measurements[i + 2]];
+    input.forEach((measurement, i) => {
+        windowTotals = [...windowTotals, measurement + input[i + 1] + input[i + 2]];
     });
 
     return getIncreases(windowTotals);
 }
 
-export const part2 = getWindowIncreases();
+export function part2(file: string) {
+    const input = getInput(file);
+    return getWindowIncreases(input);
+}
