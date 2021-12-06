@@ -1,6 +1,6 @@
-import { steps } from "./part1";
+import { getInput } from "./part1";
 
-function getPosition() {
+function getPosition(steps: string[]) {
     let horizontal = 0;
     let depth = 0;
     let aim = 0;
@@ -24,4 +24,8 @@ function getPosition() {
     return horizontal * depth;
 }
 
-export const part2 = getPosition();
+export function part2(file: string) {
+    const input = getInput(file);
+
+    return getPosition(input);
+}

@@ -1,13 +1,10 @@
 import { readFileSync } from "fs";
 
-function getSteps(file: string) {
-    const fileContent = readFileSync(file, "utf-8");
-    return fileContent.split("\n");
+export function getInput(file: string) {
+    return readFileSync(file, "utf-8").split("\n");
 }
 
-export const steps = getSteps("input/2.txt");
-
-function getPosition() {
+function getPosition(steps: string[]) {
     let horizontal = 0;
     let depth = 0;
 
@@ -29,4 +26,8 @@ function getPosition() {
     return horizontal * depth;
 }
 
-export const part1 = getPosition();
+export function part1(file: string) {
+    const input = getInput(file);
+
+    return getPosition(input);
+}

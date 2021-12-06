@@ -1,10 +1,10 @@
-import { part1 } from "./dec1/part1";
-import { part2 } from "./dec1/part2";
+import { part1 } from "./dec2/part1";
+import { part2 } from "./dec2/part2";
 
-const day = 1;
+const day = 2;
 const testOutput = {
-    part1: 7,
-    part2: 5,
+    part1: 150,
+    part2: 900,
 };
 
 console.log("Test 1 is", part1(`input/${day}-test.txt`) === testOutput.part1 ? "a success!" : "failing");
