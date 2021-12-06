@@ -9,5 +9,5 @@ mkdir $day
 # Create new files for part1 and part2
 cd $day 
 touch part1.ts part2.ts assignment.txt
-echo 'export const part1 = "not determined yet";' > part1.ts
-echo 'export const part2 = "not determined yet";' > part2.ts
+echo 'import { readFileSync } from "fs";\n\nexport function getInput(file: string){\nreturn readFileSync(file, "utf-8");\n}\n\nexport function part1(file: string) {\nconst input = getInput(file);\nconsole.log(input);\n\nreturn 0;\n}' > part1.ts
+echo 'import { readFileSync } from "fs";\n\nexport function getInput(file: string){\nreturn readFileSync(file, "utf-8");\n}\n\nexport function part2(file: string) {\nconst input = getInput(file);\nconsole.log(input);\n\nreturn 0;\n}' > part2.ts

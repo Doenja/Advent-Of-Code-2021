@@ -29,9 +29,10 @@ export function getDangerous(input: number[][][]) {
         if (x2 > x1) {
             for (let x = x1; x < x2 + 1; x++) {
                 if (overlap[x] && overlap[x].filter((yVal) => yVal === y1).length === 1) {
-                    overlap[x].push(y1);
                     dangerous++;
-                } else if (overlap[x]) {
+                }
+
+                if (overlap[x]) {
                     overlap[x].push(y1);
                 } else {
                     overlap = { ...overlap, [x]: [y1] };
@@ -41,9 +42,9 @@ export function getDangerous(input: number[][][]) {
         if (x1 > x2) {
             for (let x = x1; x > x2 - 1; x--) {
                 if (overlap[x] && overlap[x].filter((yVal) => yVal === y1).length === 1) {
-                    overlap[x].push(y1);
                     dangerous++;
-                } else if (overlap[x]) {
+                }
+                if (overlap[x]) {
                     overlap[x].push(y1);
                 } else {
                     overlap = { ...overlap, [x]: [y1] };
@@ -53,9 +54,9 @@ export function getDangerous(input: number[][][]) {
         if (y2 > y1) {
             for (let y = y1; y < y2 + 1; y++) {
                 if (overlap[x1] && overlap[x1].filter((yVal) => yVal === y).length === 1) {
-                    overlap[x1].push(y);
                     dangerous++;
-                } else if (overlap[x1]) {
+                }
+                if (overlap[x1]) {
                     overlap[x1].push(y);
                 } else {
                     overlap = { ...overlap, [x1]: [y] };
@@ -65,9 +66,9 @@ export function getDangerous(input: number[][][]) {
         if (y1 > y2) {
             for (let y = y1; y > y2 - 1; y--) {
                 if (overlap[x1] && overlap[x1].filter((yVal) => yVal === y).length === 1) {
-                    overlap[x1].push(y);
                     dangerous++;
-                } else if (overlap[x1]) {
+                }
+                if (overlap[x1]) {
                     overlap[x1].push(y);
                 } else {
                     overlap = { ...overlap, [x1]: [y] };
@@ -75,8 +76,6 @@ export function getDangerous(input: number[][][]) {
             }
         }
     });
-
-    console.log(overlap);
 
     return dangerous;
 }
