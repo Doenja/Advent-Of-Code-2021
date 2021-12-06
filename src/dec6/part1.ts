@@ -2,7 +2,7 @@ import { readFileSync } from "fs";
 
 export function getInput(file: string) {
     const fileContent = readFileSync(file, "utf-8");
-    return fileContent.trim().split(",").sort();
+    return fileContent.trim().split(",");
 }
 
 export function passTime(input: string[], days: number) {
@@ -18,7 +18,7 @@ export function passTime(input: string[], days: number) {
         "8": 0,
     };
     for (const fish of input) {
-        fishCount[fish] = fishCount[fish] ? fishCount[fish] + 1 : 1;
+        fishCount[fish]++;
     }
 
     for (let day = 1; day <= days; day++) {
