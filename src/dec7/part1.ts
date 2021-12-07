@@ -1,7 +1,10 @@
 import { readFileSync } from "fs";
 
 export function getInput(file: string) {
-    return readFileSync(file, "utf-8").split(",").map(Number);
+    return readFileSync(file, "utf-8")
+        .split(",")
+        .map(Number)
+        .sort((a, b) => a - b);
 }
 
 export function getDistance(input: number[], from: number, sumFormula: (a: number, b: number) => number) {
@@ -11,14 +14,18 @@ export function getDistance(input: number[], from: number, sumFormula: (a: numbe
     return totalDistance;
 }
 
-export function getFuel(input: number[]) {
-    const fuels = input.map((position) => getDistance(input, position, (a, b) => Math.abs(a - b)));
+export function getBestPosition(input: number[]) {
+    const isEven = input.length % 2 === 0;
 
-    return Math.min(...fuels);
+    const index = isEven ? (Math.min(input.length / 2) + Math.min(input.length / 2)) / 2 : input.length / 2;
+
+    return input[index];
 }
 
 export function part1(file: string) {
     const input = getInput(file);
 
-    return getFuel(input);
+    const bestPosition = getBestPosition(input);
+
+    return getDistance(input, bestPosition, (a, b) => Math.abs(a - b));
 }
