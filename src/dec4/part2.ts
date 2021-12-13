@@ -1,11 +1,11 @@
-import { getSumUnmarked, input, isWinner } from "./part1";
+import { getInput, getSumUnmarked, isWinner } from "./part1";
 
-function drawLastWinner(bingoBalls: number[]) {
+function drawLastWinner(rows: number[][], bingoBalls: number[]) {
     let cards: { [key: number]: { x: number[]; y: number[]; drawn: number[]; winningNumber?: number } } = {};
     let lastWinner = -1;
 
     for (const drawnNumber of bingoBalls) {
-        input.rows.forEach((row, i) => {
+        rows.forEach((row, i) => {
             const cardNr = Math.floor(i / 5);
 
             // Skip cards that already won
@@ -33,13 +33,10 @@ function drawLastWinner(bingoBalls: number[]) {
     return { card: cards[lastWinner], cardNumber: lastWinner };
 }
 
-function getAnswer() {
-    if (!input.bingoBalls) return;
+export function part2(file: string) {
+    const input = getInput(file);
+    const { card, cardNumber } = drawLastWinner(input.rows, input.bingoBalls);
+    const sumUnmarked = getSumUnmarked(input.rows, cardNumber, card.drawn);
 
-    const { card, cardNumber } = drawLastWinner(input.bingoBalls);
-    if (!card || !card.winningNumber) return;
-
-    return getSumUnmarked(cardNumber, card.drawn) * card.winningNumber;
+    return sumUnmarked && card.winningNumber ? sumUnmarked * card.winningNumber : 0;
 }
-
-export const part2 = getAnswer();

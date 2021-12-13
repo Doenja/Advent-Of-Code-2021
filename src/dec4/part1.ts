@@ -1,12 +1,11 @@
 import { readFileSync } from "fs";
 
-function getInput(file: string) {
+export function getInput(file: string) {
     const fileContent = readFileSync(file, "utf-8").split("\n");
 
-    const bingoBalls = fileContent.shift()?.split(",").map(Number);
+    const bingoBalls = fileContent.shift()?.split(",").map(Number) || [];
 
     let rows: number[][] = [];
-
     fileContent.forEach((line) => {
         if (line === "") {
             return;
@@ -19,26 +18,6 @@ function getInput(file: string) {
         bingoBalls,
         rows,
     };
-}
-
-export const input = getInput("input/4.txt");
-
-export function getSumUnmarked(cardNr: number, drawn: number[]) {
-    const startingRow = cardNr * 5;
-
-    let numbers: number[] = [];
-    for (let i = 0; i < 5; i++) {
-        numbers = [...numbers, ...input.rows[startingRow + i]];
-    }
-
-    let total = 0;
-    numbers.forEach((nr) => {
-        if (!drawn.includes(nr)) {
-            total = total + nr;
-        }
-    });
-
-    return total;
 }
 
 export function isWinner(coordinates: number[]) {
@@ -62,7 +41,7 @@ export function isWinner(coordinates: number[]) {
     return wins;
 }
 
-function drawWinner(bingoBalls: number[]) {
+function drawWinner(rows: number[][], bingoBalls: number[]) {
     let cards: { [key: number]: { x: number[]; y: number[]; drawn: number[]; winningNumber?: number } } = {};
     let winner = -1;
 
@@ -71,7 +50,7 @@ function drawWinner(bingoBalls: number[]) {
             break;
         }
 
-        input.rows.forEach((row, i) => {
+        rows.forEach((row, i) => {
             const nrIndx = row.findIndex((nr) => nr === drawnNumber);
             if (nrIndx === -1) return;
 
@@ -96,14 +75,29 @@ function drawWinner(bingoBalls: number[]) {
     return { card: cards[winner], cardNumber: winner };
 }
 
-function getAnswer() {
-    if (!input.bingoBalls) return;
+export function getSumUnmarked(rows: number[][], cardNr: number, drawn: number[]) {
+    const startingRow = cardNr * 5;
 
-    const { card, cardNumber } = drawWinner(input.bingoBalls);
+    let numbers: number[] = [];
+    for (let i = 0; i < 5; i++) {
+        numbers = [...numbers, ...rows[startingRow + i]];
+    }
 
-    if (!card || !card.winningNumber) return;
+    let total = 0;
+    numbers.forEach((nr) => {
+        if (!drawn.includes(nr)) {
+            total = total + nr;
+        }
+    });
 
-    return getSumUnmarked(cardNumber, card.drawn) * card.winningNumber;
+    return total;
 }
 
-export const part1 = getAnswer();
+export function part1(file: string) {
+    const input = getInput(file);
+
+    const { card, cardNumber } = drawWinner(input.rows, input.bingoBalls);
+    const sumUnmarked = getSumUnmarked(input.rows, cardNumber, card.drawn);
+
+    return card.winningNumber ? card.winningNumber * sumUnmarked : 0;
+}
