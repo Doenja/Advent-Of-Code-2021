@@ -19,6 +19,8 @@ function drawNumbers(folded: number[][]) {
         board[coordinate[0]][coordinate[1]] = "#";
     });
 
+    board.forEach((row) => console.log(JSON.stringify(row)));
+
     return board;
 }
 

@@ -1,10 +1,10 @@
-import { part1 } from "./dec4/part1";
-import { part2 } from "./dec4/part2";
+import { part1 } from "./dec14/part1";
+import { part2 } from "./dec14/part2";
 
-const day = 4;
+const day = 14;
 const testOutput = {
-    part1: 4512,
-    part2: 1924,
+    part1: 0,
+    part2: 0,
 };
 const output = {
     part1: part1(`input/${day}-test.txt`),
