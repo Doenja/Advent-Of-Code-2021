@@ -29,8 +29,7 @@ export function part2(file: string) {
         folded = folded.map((coordinate) => fold(instruction.along, instruction.line, coordinate));
     });
 
-    const board = drawNumbers(folded);
+    drawNumbers(folded);
 
-    console.log(board);
     return 0;
 }

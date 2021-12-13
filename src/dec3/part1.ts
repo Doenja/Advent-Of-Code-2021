@@ -17,15 +17,15 @@ export function getMostCommon(input: number[][]) {
         totals = [...totals, total];
     });
 
-    return totals.map((total) => (total / input.length > 0.5 ? 1 : 0));
+    return totals.map((total) => (total / input.length >= 0.5 ? 1 : 0));
 }
 
 export function part1(file: string) {
     const input = getInput(file);
     const mostCommon = getMostCommon(input);
 
-    const gamma = mostCommon;
-    const epsilon = mostCommon.map((nr) => (nr === 1 ? 0 : 1));
+    const gamma = parseInt(mostCommon.join(""), 2);
+    const epsilon = parseInt(mostCommon.map((nr) => (nr === 1 ? 0 : 1)).join(""), 2);
 
-    return parseInt(gamma.join(""), 2) * parseInt(epsilon.join(""), 2);
+    return gamma * epsilon;
 }
