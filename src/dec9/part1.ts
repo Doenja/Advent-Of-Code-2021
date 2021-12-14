@@ -6,38 +6,41 @@ export function getInput(file: string) {
         .map((row) => row.split("").map(Number));
 }
 
-export function filterHorizontalLows(input: number[][]) {
-    const possibleLowPoints: [number, number][] = [];
+function getAdjacents(input: number[][], x: number, y: number) {
+    const N = input[y - 1] && typeof input[y - 1][x] === "number" ? input[y - 1][x] : Infinity;
+    const E = input[y] && typeof input[y][x + 1] === "number" ? input[y][x + 1] : Infinity;
+    const S = input[y + 1] && typeof input[y + 1][x] === "number" ? input[y + 1][x] : Infinity;
+    const W = input[y] && typeof input[y][x - 1] === "number" ? input[y][x - 1] : Infinity;
+
+    return [N, E, S, W];
+}
+
+export function filterlows(input: number[][]) {
+    const lowPoints: number[] = [];
 
     input.forEach((row, iRow) => {
         row.forEach((nr, i) => {
-            const prevNr = row[i - 1];
-            const nextNr = row[i + 1];
+            if (nr === 9) return;
 
-            if (
-                (prevNr === undefined && nr < nextNr) ||
-                (nextNr === undefined && nr < prevNr) ||
-                (nr < prevNr && nr < nextNr)
-            ) {
-                possibleLowPoints.push([i, iRow]);
+            const adjacent = getAdjacents(input, i, iRow);
+
+            if (Math.min(...adjacent, nr) === nr && !adjacent.includes(nr)) {
+                lowPoints.push(nr);
             }
         });
     });
 
-    return possibleLowPoints;
+    return lowPoints;
 }
 
-export function filterVerticalLows(input: number[][], horizontalLows: number[][]) {
-    horizontalLows.forEach((coordinate) => {
-        console.log(coordinate);
-    });
-    return input;
+export function sumLows(lows: number[]) {
+    return lows.map((nr) => nr + 1).reduce((cur, prev) => cur + prev);
 }
 
 export function part1(file: string) {
     const input = getInput(file);
-    const horizontalLows = filterHorizontalLows(input);
-    console.log(filterVerticalLows(input, horizontalLows));
 
-    return 0;
+    const lows = filterlows(input);
+
+    return sumLows(lows);
 }
