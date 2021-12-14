@@ -1,8 +1,9 @@
-import { getInput } from "./part1";
+import { countElements, getInput, pairInsert } from "./part1";
 
 export function part2(file: string) {
-const input = getInput(file);
-console.log(input);
+    const input = getInput(file);
 
-return 0;
+    const polymers = pairInsert(input, 40);
+
+    return countElements(polymers);
 }
