@@ -6,7 +6,7 @@ export function getInput(file: string) {
         .map((row) => row.split("").map(Number));
 }
 
-function getAdjacents(input: number[][], x: number, y: number) {
+export function getAdjacents(input: number[][], x: number, y: number) {
     const N = input[y - 1] && typeof input[y - 1][x] === "number" ? input[y - 1][x] : Infinity;
     const E = input[y] && typeof input[y][x + 1] === "number" ? input[y][x + 1] : Infinity;
     const S = input[y + 1] && typeof input[y + 1][x] === "number" ? input[y + 1][x] : Infinity;
@@ -15,17 +15,17 @@ function getAdjacents(input: number[][], x: number, y: number) {
     return [N, E, S, W];
 }
 
-export function filterlows(input: number[][]) {
-    const lowPoints: number[] = [];
+export function findLows(input: number[][]) {
+    const lowPoints: { x: number; y: number; nr: number }[] = [];
 
-    input.forEach((row, iRow) => {
-        row.forEach((nr, i) => {
+    input.forEach((row, y) => {
+        row.forEach((nr, x) => {
             if (nr === 9) return;
 
-            const adjacent = getAdjacents(input, i, iRow);
+            const adjacent = getAdjacents(input, x, y);
 
             if (Math.min(...adjacent, nr) === nr && !adjacent.includes(nr)) {
-                lowPoints.push(nr);
+                lowPoints.push({ x, y, nr });
             }
         });
     });
@@ -40,7 +40,7 @@ export function sumLows(lows: number[]) {
 export function part1(file: string) {
     const input = getInput(file);
 
-    const lows = filterlows(input);
+    const lows = findLows(input);
 
-    return sumLows(lows);
+    return sumLows(lows.map((low) => low.nr));
 }
