@@ -29,18 +29,17 @@ export function pairInsert(input: { polymerTemplate: string[]; steps: string[] }
     // Count pairs of first polymerTemplate
     input.polymerTemplate.forEach((element, i) => {
         if (!input.polymerTemplate[i + 1]) return;
-
         count(`${element}${input.polymerTemplate[i + 1]}`, pairCount);
     });
 
-    // For each steps add the pairs
-    for (let i = 0; i < steps + 1; i++) {
+    // For each steps find the new pairs and count them
+    for (let i = 0; i < steps; i++) {
         const newPairCount: { [pair: string]: number } = {};
 
         Object.keys(pairCount).forEach((pair) => {
             const insert = getInsert(pair, input.steps);
             const separate = Array.from(pair);
-            const factor = newPairCount[pair] || 1;
+            const factor = pairCount[pair] || 1;
 
             count(`${separate[0]}${insert}`, newPairCount, factor);
             count(`${insert}${separate[1]}`, newPairCount, factor);
@@ -71,9 +70,7 @@ export function countElements(pairCount: { [pair: string]: number }) {
         min = Math.min(value, min);
     });
 
-    console.log(pairCount, counter);
-
-    return max - min;
+    return (max - min + 1) / 2;
 }
 
 export function part1(file: string) {
